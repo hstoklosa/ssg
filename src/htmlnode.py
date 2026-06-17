@@ -26,7 +26,6 @@ class HTMLNode:
 
 
 class LeafNode(HTMLNode):
-
     def __init__(self, tag: str, value: str, props: dict[str, str] | None = None) -> str:
         super().__init__(tag, value, None, props)
 
@@ -35,9 +34,45 @@ class LeafNode(HTMLNode):
             raise ValueError("all leaf nodes must have a value") 
         if not self.tag:
             return self.value
-        html_props = self.props_to_html()
-        return f"<{self.tag}{html_props}>{self.value}</{self.tag}>"
+
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
     def __repr__(self) -> str:
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
 
+
+class ParentNode(HTMLNode):
+    def __init__(
+        self, 
+        tag: str, 
+        children: list[HTMLNode], 
+        props: dict[str, str] | None = None
+    ) -> None:
+        self.tag = tag
+        self.children = children
+        self.props = props
+    
+    def to_html(self) -> str:
+        if not self.tag:
+            raise ValueError("all parent nodes must have a tag")
+        if not self.children:
+            raise ValueError("all parent nodes must have children")
+        
+        children_html = ""
+        for node in self.children:
+            children_html += node.to_html()
+        return f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
+
+
+if __name__ == "__main__":
+    node = ParentNode(
+        "p",
+        [
+            LeafNode("b", "Bold text"),
+            LeafNode(None, "Normal text"),
+            LeafNode("i", "italic text"),
+            LeafNode(None, "Normal text"),
+        ],
+    )
+
+    print(node.to_html())
