@@ -10,18 +10,17 @@ class HTMLNode:
         self.children = children
         self.props = props
 
-    def to_html(self):
-        raise NotImplementedError()
+    def to_html(self) -> str:
+        raise NotImplementedError("to_html method not implemented")
     
-    def props_to_html(self):
+    def props_to_html(self) -> str:
         if self.props is None:
             return ""
-        return "".join([f" {name}=\"{value}\"" for name, value in self.props.items()])
+        html_props = ""
+        for name in self.props:
+            html_props += f' {name}=\"{self.props[name]}\"'
+        return html_props
 
     def __repr__(self) -> str:
-        return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
+        return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
 
-
-if __name__ == "__main__":
-    node = HTMLNode("p", "This is a html node", None, {"href": "https://www.google.com", "target": "_blank"})
-    print(node.props_to_html())
