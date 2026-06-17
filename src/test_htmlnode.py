@@ -40,6 +40,15 @@ class TestHTMLNode(unittest.TestCase):
         node = LeafNode("div", "Just a container", {"styles": "background: red"})
         self.assertEqual(node.to_html(), "<div styles=\"background: red\">Just a container</div>")
 
+    def test_leaf_to_html_no_tag(self):
+        node = LeafNode(None, "Hello, world!")
+        self.assertEqual(node.to_html(), "Hello, world!")
+
+    def test_leaf_to_html_no_value(self):
+        node = LeafNode("p", None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+
 
 if __name__ == "__main__":
     unittest.main()
