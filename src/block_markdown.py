@@ -103,10 +103,25 @@ def codeblock_to_html_node(block: str) -> ParentNode:
 
 
 def list_to_html_node(block: str, tag: str) -> ParentNode:
-    # list_items = []
-    # for line in block.split("\n"):
-    pass
+    lines = block.split("\n")
+    items = []
+    for line in lines:
+        text = line[2:] if tag == "ul" else line.split(".", 1)[1]
+        items.append(ParentNode("li", text_to_children(text)))
+    return ParentNode(tag, items)
 
+
+def quote_to_html_block(block: str) -> ParentNode:
+    lines = block.split("\n")
+    raw_lines = []
+
+    for line in lines:
+        if not line.startswith(">"):
+            raise ValueError("invalid quote block")
+        raw_lines.append(line.lstrip(">").strip())
+    raw_text = " ".join(raw_lines)
+    children = text_to_children(raw_text)
+    return ParentNode("blockquote", children)
 
 
 def markdown_to_html_node(markdown: str) -> ParentNode:
@@ -124,26 +139,11 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
             case BlockType.CODE:
                 nodes.append(codeblock_to_html_node(block))
             case BlockType.QUOTE:
-                lines = block.split("\n")
-                clean_lines = list(map(lambda l: l[2:] if len(l) > 1 and l[1] == " " else l[1:], lines))
-                children = text_to_children(" ".join(clean_lines))
-                nodes.append(ParentNode("blockquote", children))
+                nodes.append(quote_to_html_block(block))
             case BlockType.UNORDERED_LIST:
-                lines = block.split("\n")
-                clean_lines = list(map(lambda l: l[2:] if len(l) > 1 and l[1] == " " else l[1:], lines))
-                list_nodes = []
-                for line in clean_lines:
-                    children = text_to_children(line)
-                    list_nodes.append(ParentNode("li", children))
-                nodes.append(ParentNode("ul", list_nodes))
+                nodes.append(list_to_html_node(block, "ul"))
             case BlockType.ORDERED_LIST:
-                lines = block.split("\n")
-                clean_lines = list(map(lambda l: l[2:] if len(l) > 1 and l[1] == " " else l[1:], lines))
-                list_nodes = []
-                for line in clean_lines:
-                    children = text_to_children(line)
-                    list_nodes.append(ParentNode("li", children))
-                nodes.append(ParentNode("ol", list_nodes))
+                nodes.append(list_to_html_node(block, "ol"))
             case _:
                 raise ValueError("invalid block type")
 
