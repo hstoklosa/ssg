@@ -157,7 +157,26 @@ the **same** even with inline stuff
             "<div><blockquote>This is a quote with <b>bold</b> and <i>italic</i> text</blockquote></div>",
         )
 
-    
+
+    def test_lists(self):
+        md = """
+- This is a list
+- with items
+- and _more_ items
+
+1. This is an `ordered` list
+2. with items
+3. and more items
+
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul><ol><li>This is an <code>ordered</code> list</li><li>with items</li><li>and more items</li></ol></div>",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
