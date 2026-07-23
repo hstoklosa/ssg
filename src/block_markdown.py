@@ -106,7 +106,7 @@ def list_to_html_node(block: str, tag: str) -> ParentNode:
     lines = block.split("\n")
     items = []
     for line in lines:
-        text = line[2:] if tag == "ul" else line.split(".", 1)[1]
+        text = line[2:] if tag == "ul" else line.split(". ", 1)[1]
         items.append(ParentNode("li", text_to_children(text)))
     return ParentNode(tag, items)
 
