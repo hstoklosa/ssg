@@ -1,9 +1,15 @@
-from textnode import TextNode, TextType
+from copystatic import copy_tree
+from generate_content import generate_pages_recursive
+
+STATIC_DIR_PATH = "./static"
+PUBLIC_DIR_PATH = "./public"
+CONTENT_DIR_PATH = "./content"
+TEMPLATE_PATH = "./template.html"
 
 
 def main() -> None:
-    node = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
-    print(node)
+    copy_tree(STATIC_DIR_PATH, PUBLIC_DIR_PATH)
+    generate_pages_recursive(CONTENT_DIR_PATH, TEMPLATE_PATH, PUBLIC_DIR_PATH)
 
 
 main()
